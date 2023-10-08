@@ -4,7 +4,14 @@ function onOpen() {
 
 function setColors()
 {
-  stylizeParagraphs("#56c765", "#9d5ffa", "#FFFFFF", "#9d5ffa", "#9d5ffa", "#8082ff")
+  phrase_color = "#56c765";
+  equal_color = "#9d5ffa";
+  meanings_color = "#FFFFFF";
+  pipes_color = "#9d5ffa";
+  dash_color = "#9d5ffa";
+  examples_color = "#8082ff";
+
+  stylizeParagraphs(phrase_color, equal_color, meanings_color, pipes_color, dash_color, examples_color);
 }
 
 function stylizeParagraphs(phrase_color, equal_color, meanings_color, pipes_color, dash_color, examples_color) {
@@ -20,7 +27,7 @@ function stylizeParagraphs(phrase_color, equal_color, meanings_color, pipes_colo
 
     var paragraph_string = paragraph.getText().toString();
     
-    var splited_string = paragraph_string.split(/[=|-]/); // extract element of string (string without = | - marks) 
+    var splited_string = paragraph_string.split(/[=|-]/); // extract element of string (string without '=' '|' '-' marks) 
 
     var meanings_number = paragraph_string.replace(/[^|]/g, "").length + 1;
     var examples_number = paragraph_string.replace(/[^-]/g, "").length;
@@ -33,7 +40,7 @@ function stylizeParagraphs(phrase_color, equal_color, meanings_color, pipes_colo
     if (splited_string.length == 1) // if paragraph only has a phrase (not meanings and examples)
       continue;
       
-    // create an = mark as paragraph
+    // create an '=' mark as paragraph
     var equal = active_document.getBody().appendParagraph("= ");
     equal.setAttributes({BOLD : false, FOREGROUND_COLOR : equal_color, ITALIC : false})
     equal.merge();  
