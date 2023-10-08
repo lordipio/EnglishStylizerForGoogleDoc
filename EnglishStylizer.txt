@@ -12,7 +12,6 @@ function changeLineColor() {
   
   var len = test.replace(/[^-]/g, "").length;
   
-  Logger.log(test.split(/[=|-]/));
   
   for (var paragraph of paragraphs)
   {
