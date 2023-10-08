@@ -1,72 +1,72 @@
 function onOpen() {
-  DocumentApp.getUi().createAddonMenu().addItem('changeLineColor', 'changeLineColor').addToUi()
+  DocumentApp.getUi().createAddonMenu().addItem('Stylize All Paragraphs', "setColors").addToUi()
 }
 
-function changeLineColor() {
+function setColors()
+{
+  stylizeParagraphs("#56c765", "#9d5ffa", "#FFFFFF", "#9d5ffa", "#9d5ffa", "#8082ff")
+}
+
+function stylizeParagraphs(phrase_color, equal_color, meanings_color, pipes_color, dash_color, examples_color) {
 
   var active_document = DocumentApp.getActiveDocument();
-  var paragraphs = active_document.getBody().getParagraphs();
-  var test = paragraphs[0].getText().toString();
-  var meaning = paragraphs[0].getText().toString().substring(test.indexOf("=") + 1, test.indexOf("|"));
+  var paragraphs = active_document.getBody().getParagraphs(); // get all paragrapsh
+
   
-  
-  var len = test.replace(/[^-]/g, "").length;
-  
-  
-  for (var paragraph of paragraphs)
+  for (var paragraph of paragraphs) // read every paragraphs
   {
-    if (paragraph.getText().match(/^\s*$/) !== null)
+    if (paragraph.getText().match(/^\s*$/) !== null) // if paragraph is empty (or just spaces)
       continue;
 
     var paragraph_string = paragraph.getText().toString();
-    var paragraph_string_temp = paragraph_string;
     
-    var splited_string = paragraph_string.split(/[=|-]/);
+    var splited_string = paragraph_string.split(/[=|-]/); // extract element of string (string without = | - marks) 
 
-    var meanings_number = paragraph_string_temp.replace(/[^|]/g, "").length + 1;
-    var examples_number = paragraph_string_temp.replace(/[^-]/g, "").length;
+    var meanings_number = paragraph_string.replace(/[^|]/g, "").length + 1;
+    var examples_number = paragraph_string.replace(/[^-]/g, "").length;
 
-    var phrase = splited_string[0];
+    // create phrase paragraph
+    var phrase = splited_string[0]; // phrase is always first element
     var phrase_paragraph = active_document.getBody().appendParagraph(phrase);
-    phrase_paragraph.setAttributes({BOLD : true, FOREGROUND_COLOR : "#56c765", ITALIC : false});
+    phrase_paragraph.setAttributes({BOLD : true, FOREGROUND_COLOR : phrase_color, ITALIC : false});
 
-    if (splited_string.length == 1)
+    if (splited_string.length == 1) // if paragraph only has a phrase (not meanings and examples)
       continue;
       
+    // create an = mark as paragraph
     var equal = active_document.getBody().appendParagraph("= ");
-    equal.setAttributes({BOLD : false, FOREGROUND_COLOR : "#FFFFFF", ITALIC : false})
-    equal.merge();
-    
+    equal.setAttributes({BOLD : false, FOREGROUND_COLOR : equal_color, ITALIC : false})
+    equal.merge();  
 
-
-    if (meanings_number != 0)
+    if (meanings_number != 0) // if meaning number is zero, doesn't need to read loop
       for (var i = 1; i < meanings_number + 1; i++) // for meanings
       {
+        // create meanings paragraph
           var meaning = splited_string[i];
           meaning_paragraph = active_document.getBody().appendParagraph(meaning);
-          meaning_paragraph.setAttributes({BOLD : true, FOREGROUND_COLOR : "#FFFFFF", ITALIC : false});
+          meaning_paragraph.setAttributes({BOLD : true, FOREGROUND_COLOR : meanings_color, ITALIC : false});
           meaning_paragraph.merge();
 
+        // create pipe paragraph 
           if (i == meanings_number) // don't create last vertical line
             break;
-
-          var vertical_line_paragraph = active_document.getBody().appendParagraph("|");
-          vertical_line_paragraph.setAttributes({BOLD : true, FOREGROUND_COLOR : "#9d5ffa", ITALIC : false});
-          vertical_line_paragraph.merge();
+          var pipe_paragraph = active_document.getBody().appendParagraph("|");
+          pipe_paragraph.setAttributes({BOLD : true, FOREGROUND_COLOR : pipes_color, ITALIC : false});
+          pipe_paragraph.merge();
       }
 
-    if (examples_number != 0)
-      for (var i = meanings_number + examples_number - 2; i < splited_string.length; i++) // for examples
+    if (examples_number != 0) // if example number is zero, doesn't need to read loop
+      for (var i = meanings_number + 1; i < splited_string.length; i++) // for examples
       {
-        if (i <= 0)
-          i = 1;
-          
+        // create dash paragraph
           var dash_paragraph = active_document.getBody().appendParagraph("-");
-          dash_paragraph.setAttributes({BOLD : true, FOREGROUND_COLOR : "#9d5ffa", ITALIC : false});
+          dash_paragraph.setAttributes({BOLD : true, FOREGROUND_COLOR : dash_color, ITALIC : false});
           dash_paragraph.merge();
+
+        // create example paragraph
           var example = splited_string[i];
           example_paragraph = active_document.getBody().appendParagraph(example);
-          example_paragraph.setAttributes({BOLD : false, FOREGROUND_COLOR : "#8082ff", ITALIC : true});
+          example_paragraph.setAttributes({BOLD : false, FOREGROUND_COLOR : examples_color, ITALIC : true});
           example_paragraph.merge();
       } 
   }
