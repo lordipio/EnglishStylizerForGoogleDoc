@@ -1,0 +1,74 @@
+function onOpen() {
+  DocumentApp.getUi().createAddonMenu().addItem('changeLineColor', 'changeLineColor').addToUi()
+}
+
+function changeLineColor() {
+
+  var active_document = DocumentApp.getActiveDocument();
+  var paragraphs = active_document.getBody().getParagraphs();
+  var test = paragraphs[0].getText().toString();
+  var meaning = paragraphs[0].getText().toString().substring(test.indexOf("=") + 1, test.indexOf("|"));
+  
+  
+  var len = test.replace(/[^-]/g, "").length;
+  
+  Logger.log(test.split(/[=|-]/));
+  
+  for (var paragraph of paragraphs)
+  {
+    if (paragraph.getText().match(/^\s*$/) !== null)
+      continue;
+
+    var paragraph_string = paragraph.getText().toString();
+    var paragraph_string_temp = paragraph_string;
+    
+    var splited_string = paragraph_string.split(/[=|-]/);
+
+    var meanings_number = paragraph_string_temp.replace(/[^|]/g, "").length + 1;
+    var examples_number = paragraph_string_temp.replace(/[^-]/g, "").length;
+
+    var phrase = splited_string[0];
+    var phrase_paragraph = active_document.getBody().appendParagraph(phrase);
+    phrase_paragraph.setAttributes({BOLD : true, FOREGROUND_COLOR : "#56c765", ITALIC : false});
+
+    if (splited_string.length == 1)
+      continue;
+      
+    var equal = active_document.getBody().appendParagraph("= ");
+    equal.setAttributes({BOLD : false, FOREGROUND_COLOR : "#FFFFFF", ITALIC : false})
+    equal.merge();
+    
+
+
+    if (meanings_number != 0)
+      for (var i = 1; i < meanings_number + 1; i++) // for meanings
+      {
+          var meaning = splited_string[i];
+          meaning_paragraph = active_document.getBody().appendParagraph(meaning);
+          meaning_paragraph.setAttributes({BOLD : true, FOREGROUND_COLOR : "#FFFFFF", ITALIC : false});
+          meaning_paragraph.merge();
+
+          if (i == meanings_number) // don't create last vertical line
+            break;
+
+          var vertical_line_paragraph = active_document.getBody().appendParagraph("|");
+          vertical_line_paragraph.setAttributes({BOLD : true, FOREGROUND_COLOR : "#9d5ffa", ITALIC : false});
+          vertical_line_paragraph.merge();
+      }
+
+    if (examples_number != 0)
+      for (var i = meanings_number + examples_number - 2; i < splited_string.length; i++) // for examples
+      {
+        if (i <= 0)
+          i = 1;
+          
+          var dash_paragraph = active_document.getBody().appendParagraph("-");
+          dash_paragraph.setAttributes({BOLD : true, FOREGROUND_COLOR : "#9d5ffa", ITALIC : false});
+          dash_paragraph.merge();
+          var example = splited_string[i];
+          example_paragraph = active_document.getBody().appendParagraph(example);
+          example_paragraph.setAttributes({BOLD : false, FOREGROUND_COLOR : "#8082ff", ITALIC : true});
+          example_paragraph.merge();
+      } 
+  }
+}
