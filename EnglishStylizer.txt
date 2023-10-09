@@ -38,7 +38,12 @@ function stylizeParagraphs(phrase_color, equal_color, meanings_color, pipes_colo
     phrase_paragraph.setAttributes({BOLD : true, FOREGROUND_COLOR : phrase_color, ITALIC : false});
 
     if (splited_string.length == 1) // if paragraph only has a phrase (not meanings and examples)
+    {
+      var space_paragraph = active_document.getBody().appendParagraph(" "); // adding space paragraph for not changing bullet points color
+      space_paragraph.setAttributes({BOLD : false, FOREGROUND_COLOR : meanings_color, ITALIC : false})
+      space_paragraph.merge();  
       continue;
+    }
       
     // create an '=' mark as paragraph
     var equal = active_document.getBody().appendParagraph("= ");
